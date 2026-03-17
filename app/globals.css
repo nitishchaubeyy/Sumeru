@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
+@theme {
+  /* Defining custom colors for Tailwind v4 */
+  --color-brand-bg: var(--bg-color);
+  --color-brand-text: var(--text-color);
+  --color-brand-orange: #ea580c;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-color: #FFFBF2;
+  --text-color: #2D2424;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --bg-color: #121212;
+  --text-color: #EAEAEA;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
