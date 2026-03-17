@@ -1,26 +1,29 @@
 @import "tailwindcss";
 
+/* Sumeru Theme for Tailwind v4 */
 @theme {
-  /* Defining custom colors for Tailwind v4 */
-  --color-brand-bg: var(--bg-color);
-  --color-brand-text: var(--text-color);
-  --color-brand-orange: #ea580c;
+  --color-brand-bg: var(--bg);
+  --color-brand-text: var(--text);
+  --color-brand-orange: #f97316; /* orange-500 */
 }
 
 :root {
-  --bg-color: #FFFBF2;
-  --text-color: #2D2424;
+  --bg: #FFFBF2;
+  --text: #2D2424;
 }
 
 .dark {
-  --bg-color: #121212;
-  --text-color: #EAEAEA;
+  --bg: #121212;
+  --text: #EAEAEA;
 }
 
-@layer base {
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+
+/* Feature Cards and Sections Fix */
+section, .card {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
