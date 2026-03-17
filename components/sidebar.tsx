@@ -40,7 +40,7 @@ export function Sidebar({ user }: { user: any }) {
       name: "Sankalp Tracker",
       href: "/dashboard/sankalp",
       icon: Home,
-      disabled: true,
+      disabled: false,
     },
     {
       name: "My Profile",

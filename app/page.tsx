@@ -49,7 +49,7 @@ export default async function LandingPage() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Link href="/login" className="bg-brand-orange text-white px-6 py-2 rounded-full font-bold shadow-lg">
-            Pravēsh
+            Shri Ganesh Karein
           </Link>
         </div>
       </nav>
