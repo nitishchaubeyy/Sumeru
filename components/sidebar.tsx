@@ -8,14 +8,15 @@ import {
   Settings,
   LogOut,
   User as UserIcon,
-  Flower2, // Mala ke liye icon
+  Flower2,
+  Edit3, // Manual entry ke liye icon
 } from "lucide-react";
 
 export function Sidebar({ user }: { user: any }) {
   const pathname = usePathname();
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
   const handleLogout = async () => {
@@ -24,7 +25,17 @@ export function Sidebar({ user }: { user: any }) {
   };
 
   const menuItems = [
-    { name: "Mala Dashboard", href: "/dashboard", icon: Flower2 },
+    { 
+      name: "Mala Dashboard", 
+      href: "/dashboard", 
+      icon: Flower2 
+    },
+    { 
+      name: "Manual Entry", 
+      href: "/dashboard/manual", 
+      icon: Edit3, 
+      disabled: false // Ise humne active kar diya hai
+    },
     {
       name: "Sankalp Tracker",
       href: "/dashboard/sankalp",
@@ -36,7 +47,7 @@ export function Sidebar({ user }: { user: any }) {
       href: "/dashboard/profile",
       icon: UserIcon,
       disabled: false,
-    }, 
+    },
   ];
 
   return (
