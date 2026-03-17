@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Bell, BellOff } from "lucide-react"; // Lucide icons use kar rahe hain
+import { Bell, BellOff } from "lucide-react";
+import { toast } from "sonner"; // Naya import
 import Link from "next/link";
 
 export default function Dashboard() {
@@ -27,7 +28,6 @@ export default function Dashboard() {
     };
     getUser();
     
-    // Audio load karna
     audioRef.current = new Audio("https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3");
   }, []);
 
@@ -35,9 +35,8 @@ export default function Dashboard() {
     setCount((prev) => prev + 1);
     setSessionTotal((prev) => prev + 1);
     
-    // Agar sound enabled hai toh bajao
     if (isSoundEnabled && audioRef.current) {
-      audioRef.current.currentTime = 0; // Har click par reset
+      audioRef.current.currentTime = 0;
       audioRef.current.play().catch(e => console.log("Audio play failed:", e));
     }
   };
@@ -45,6 +44,7 @@ export default function Dashboard() {
   const syncJapToDB = async () => {
     if (sessionTotal === 0) return;
     setIsSyncing(true);
+    
     const { data: { user } } = await supabase.auth.getUser();
     
     const { error } = await supabase.from("jap_logs").insert({
@@ -55,14 +55,17 @@ export default function Dashboard() {
 
     if (!error) {
       setSessionTotal(0);
-      alert("Sankalp updated! Aapka Jap save ho gaya hai.");
+      // alert hata kar toast add kiya
+      toast.success("Sankalp updated! Aapka Jap save ho gaya hai.");
+    } else {
+      // Error handling ke liye bhi toast
+      toast.error("Sync fail ho gaya: " + error.message);
     }
     setIsSyncing(false);
   };
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col transition-colors duration-300">
-      {/* Navbar */}
       <nav className="p-6 flex justify-between items-center max-w-7xl w-full mx-auto">
         <Link href="/" className="text-2xl font-black text-brand-orange tracking-tighter">SUMERU</Link>
         <div className="flex items-center gap-4">
@@ -80,10 +83,8 @@ export default function Dashboard() {
         <p className="text-brand-orange font-bold tracking-widest uppercase mb-2">Radhe Radhe, {userName}</p>
         <h2 className="text-2xl font-medium opacity-60 mb-12 italic">Keep your focus on the sound of the name.</h2>
 
-        {/* --- The Digital Mala Bead Container --- */}
         <div className="relative group">
-          {/* Main Count Button */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-orange-400 to-red-500 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+          <div className="absolute -inset-1 bg-linear-to-r from-orange-400 to-red-500 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
           <button
             onClick={handleIncrement}
             className="relative w-72 h-72 md:w-80 md:h-80 bg-white dark:bg-zinc-900 rounded-full shadow-2xl border-8 border-orange-50 dark:border-zinc-800 flex flex-col items-center justify-center active:scale-95 transition-transform"
@@ -92,10 +93,9 @@ export default function Dashboard() {
             <span className="text-sm font-bold opacity-40 mt-2 uppercase">Total Jap</span>
           </button>
 
-          {/* --- Sound Toggle Button (Extreme Corner) --- */}
           <button
             onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-            className="absolute top-4 right-4 p-3 bg-white dark:bg-zinc-800 rounded-full shadow-md border border-orange-100 dark:border-zinc-700 hover:scale-110 active:scale-90 transition-all z-10"
+            className="absolute top-4 right-4 p-3 bg-white dark:bg-zinc-900 rounded-full shadow-md border border-orange-100 dark:border-zinc-700 hover:scale-110 active:scale-90 transition-all z-10"
             title={isSoundEnabled ? "Disable Sound" : "Enable Sound"}
           >
             {isSoundEnabled ? (
@@ -106,7 +106,6 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* --- Submission Stats --- */}
         <div className="mt-16 flex flex-col items-center gap-6">
           <div className="bg-orange-50 dark:bg-zinc-800/50 px-10 py-5 rounded-3xl border border-orange-100 dark:border-zinc-700">
             <p className="text-xs font-bold opacity-50 uppercase tracking-widest mb-1">Session Progress</p>

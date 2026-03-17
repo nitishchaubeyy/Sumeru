@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { Toaster } from "sonner"; // Naya import
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,13 +15,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
+          {/* Toaster yahan add kiya hai */}
+          <Toaster position="top-center" richColors />
           {children}
         </ThemeProvider>
       </body>
