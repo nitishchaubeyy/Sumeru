@@ -5,11 +5,10 @@ import { usePathname } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import {
   Home,
-  Settings,
   LogOut,
   User as UserIcon,
   Flower2,
-  Edit3, // Manual entry ke liye icon
+  Edit3,
 } from "lucide-react";
 
 export function Sidebar({ user }: { user: any }) {
@@ -25,42 +24,28 @@ export function Sidebar({ user }: { user: any }) {
   };
 
   const menuItems = [
-    { 
-      name: "Mala Dashboard", 
-      href: "/dashboard", 
-      icon: Flower2 
-    },
-    { 
-      name: "Manual Entry", 
-      href: "/dashboard/manual", 
-      icon: Edit3, 
-      disabled: false // Ise humne active kar diya hai
-    },
-    {
-      name: "Sankalp Tracker",
-      href: "/dashboard/sankalp",
-      icon: Home,
-      disabled: false,
-    },
-    {
-      name: "My Profile",
-      href: "/dashboard/profile",
-      icon: UserIcon,
-      disabled: false,
-    },
+    { name: "Mala", href: "/dashboard", icon: Flower2 },
+    { name: "Manual", href: "/dashboard/manual", icon: Edit3 },
+    { name: "Sankalp", href: "/dashboard/sankalp", icon: Home },
+    { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
   ];
 
   return (
-    <aside className="w-64 bg-white dark:bg-zinc-950 border-r border-orange-100 dark:border-zinc-800 flex flex-col h-screen sticky top-0 transition-colors duration-300">
-      {/* --- App Brand --- */}
-      <div className="p-8">
-        <h1 className="text-2xl font-black text-brand-orange tracking-tighter">
+    <aside className="
+      fixed bottom-0 left-0 w-full h-24 
+      md:sticky md:top-0 md:w-72 md:h-screen 
+      bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl
+      border-t md:border-t-0 md:border-r border-orange-100 dark:border-zinc-800 
+      flex flex-row md:flex-col z-50 transition-all duration-300
+    ">
+      {/* Desktop Brand */}
+      <div className="hidden md:block p-10">
+        <h1 className="text-3xl font-black text-brand-orange tracking-tighter">
           SUMERU
         </h1>
       </div>
 
-      {/* --- Navigation --- */}
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex flex-row md:flex-col flex-1 items-center justify-around md:justify-start md:px-6 md:space-y-4 py-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -68,46 +53,39 @@ export function Sidebar({ user }: { user: any }) {
           return (
             <Link
               key={item.name}
-              href={item.disabled ? "#" : item.href}
+              href={item.href}
               className={`
-                flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all
-                ${item.disabled ? "opacity-30 cursor-not-allowed" : "hover:scale-[1.02]"}
-                ${
-                  isActive
-                    ? "bg-brand-orange text-white shadow-lg shadow-orange-200 dark:shadow-none"
-                    : "text-slate-500 dark:text-zinc-400 hover:bg-orange-50 dark:hover:bg-zinc-900"
-                }
+                flex flex-col md:flex-row items-center gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 rounded-2xl md:rounded-2rem font-black transition-all
+                ${isActive 
+                  ? "text-brand-orange md:bg-brand-orange md:text-white shadow-xl md:shadow-orange-200 dark:shadow-none scale-110 md:scale-100" 
+                  : "text-slate-400 dark:text-zinc-500 hover:text-brand-orange"}
               `}
             >
-              <Icon className="w-5 h-5" />
-              {item.name}
+              <Icon className="w-7 h-7 md:w-6 md:h-6" />
+              <span className="text-[12px] md:text-lg tracking-tight">
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
 
-      {/* --- User Profile Section --- */}
-      <div className="p-4 border-t border-orange-100 dark:border-zinc-800">
-        <div className="bg-orange-50 dark:bg-zinc-900 rounded-3xl p-4 flex flex-col gap-4">
+      <div className="hidden md:block p-6 border-t border-orange-100 dark:border-zinc-800">
+        <div className="bg-orange-50 dark:bg-zinc-900 rounded-2rem p-5 flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <img
               src={user.user_metadata.avatar_url}
               alt="Profile"
-              className="w-10 h-10 rounded-full border-2 border-brand-orange shadow-sm"
+              className="w-12 h-12 rounded-full border-2 border-brand-orange shadow-sm"
             />
             <div className="overflow-hidden">
-              <p className="font-bold text-sm truncate">
-                {user.user_metadata.full_name}
-              </p>
-              <p className="text-[10px] uppercase tracking-widest font-black text-brand-orange">
-                Seeker
-              </p>
+              <p className="font-bold text-sm truncate">{user.user_metadata.full_name}</p>
+              <p className="text-[10px] uppercase tracking-widest font-black text-brand-orange">Seeker</p>
             </div>
           </div>
-
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center gap-2 w-full py-2 bg-white dark:bg-zinc-800 text-red-500 rounded-xl text-xs font-black shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border border-red-100 dark:border-red-900/30"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-white dark:bg-zinc-800 text-red-500 rounded-2xl text-xs font-black shadow-sm hover:bg-red-50 transition-all border border-red-100 dark:border-red-900/30"
           >
             <LogOut className="w-4 h-4" />
             LOGOUT
