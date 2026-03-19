@@ -11,6 +11,8 @@ import {
   Activity,
   History,
   Calendar,
+  LogOut,      // 🎯 Added for Logout
+  ShieldAlert, // 🎯 Added for Section Header
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -18,7 +20,7 @@ export default function ProfilePage() {
   const [userMetadata, setUserMetadata] = useState<any>(null);
   const [displayName, setDisplayName] = useState("");
   const [stats, setStats] = useState({ total: 0, sessions: 0 });
-  const [logs, setLogs] = useState<any[]>([]); // 🎯 Past logs ke liye state
+  const [logs, setLogs] = useState<any[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const supabase = createBrowserClient(
@@ -35,7 +37,6 @@ export default function ProfilePage() {
 
     setUserMetadata(user.user_metadata);
 
-    // 1. Fetch Display Name
     const { data: profile } = await supabase
       .from("profiles")
       .select("display_name")
@@ -43,12 +44,11 @@ export default function ProfilePage() {
       .single();
     if (profile?.display_name) setDisplayName(profile.display_name);
 
-    // 2. Fetch ALL Logs for History & Stats
-    const { data: allLogs, error } = await supabase
+    const { data: allLogs } = await supabase
       .from("jap_logs")
       .select("*")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false }); // Latest first
+      .order("created_at", { ascending: false });
 
     if (allLogs) {
       setLogs(allLogs);
@@ -63,12 +63,19 @@ export default function ProfilePage() {
     fetchProfileData();
   }, []);
 
+  // 🎯 Logout Logic
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Logout mein samasya aayi!");
+    } else {
+      window.location.href = "/"; // Landing page par wapas
+    }
+  };
+
   const handleUpdateDisplayName = async () => {
     setIsUpdating(true);
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error("User nahi mila!");
       setIsUpdating(false);
@@ -76,27 +83,18 @@ export default function ProfilePage() {
     }
 
     const cleanName = displayName.trim();
-    console.log("Updating Name to:", cleanName, "for User ID:", user.id);
-
     const { data, error } = await supabase
       .from("profiles")
       .update({ display_name: cleanName })
       .eq("id", user.id)
-      .select(); // 🎯 .select() se humein pata chalega ki update hua ya nahi
+      .select();
 
     if (error) {
-      console.error("Supabase Error:", error);
       toast.error("Galti: " + error.message);
     } else if (data && data.length > 0) {
-      console.log("Update Success Data:", data);
       toast.success("Mandal mein ab aap isi naam se dikhenge!");
       fetchProfileData();
-    } else {
-      // 🎯 Agar yahan pahunche, matlab row match nahi hui ya RLS ne roka
-      console.warn("No rows updated. Check if user.id matches profile.id");
-      toast.error("Update nahi ho paya. Ek baar page refresh karke dekhiye.");
     }
-
     setIsUpdating(false);
   };
 
@@ -156,7 +154,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* --- Leaderboard Settings (Gupt Naam) --- */}
+      {/* --- Mandal Settings --- */}
       <div className="bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-4xl border border-orange-100 dark:border-zinc-800 shadow-xl">
         <div className="flex items-center gap-3 mb-8">
           <Shield className="text-brand-orange w-6 h-6" />
@@ -185,7 +183,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* --- 🎯 THE RETURN: NAAM-JAP PATRIKA (History) --- */}
+      {/* --- History Section --- */}
       <div className="bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-4xl border border-orange-100 dark:border-zinc-800 shadow-xl overflow-hidden">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
@@ -199,7 +197,6 @@ export default function ProfilePage() {
           </span>
         </div>
 
-        {/* Scrollable Container */}
         <div className="max-h-125 overflow-y-auto pr-2 custom-scrollbar">
           {logs.length > 0 ? (
             <div className="space-y-3">
@@ -239,11 +236,38 @@ export default function ProfilePage() {
           ) : (
             <div className="py-20 text-center">
               <Activity className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-              <p className="text-slate-400 font-bold italic">
-                Abhi koi record nahi mila.
-              </p>
+              <p className="text-slate-400 font-bold italic">Abhi koi record nahi mila.</p>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* --- 🎯 NEW: LOGOUT SECTION --- */}
+      <div className="pt-10">
+        <div className="bg-red-50/50 dark:bg-red-950/10 rounded-4xl p-8 md:p-12 border-2 border-dashed border-red-200 dark:border-red-900/30">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-3xl text-red-600 dark:text-red-400">
+                <ShieldAlert className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
+                  Sumeru Se Vida
+                </h3>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
+                  Aapka sara data surakshit hai. Agli sadhana ke liye phir milenge.
+                </p>
+              </div>
+            </div>
+            
+            <button
+              onClick={handleLogout}
+              className="px-10 py-5 bg-white dark:bg-zinc-900 text-red-600 dark:text-red-400 rounded-3xl font-black text-lg shadow-sm border border-red-100 dark:border-red-900/30 hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95 shadow-red-100 dark:shadow-none"
+            >
+              <LogOut className="w-6 h-6" />
+              LOGOUT
+            </button>
+          </div>
         </div>
       </div>
     </div>
