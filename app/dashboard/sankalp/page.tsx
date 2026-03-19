@@ -80,7 +80,7 @@ export default function SankalpPage() {
             </div>
             <div className="w-full h-6 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border-2 border-zinc-50 dark:border-zinc-700">
               <div 
-                className="h-full bg-gradient-to-r from-orange-400 to-red-500 transition-all duration-1000"
+                className="h-full bg-linear-to-r from-orange-400 to-red-500 transition-all duration-1000"
                 style={{ width: `${Math.min((sankalp.current_count / sankalp.target_count) * 100, 100)}%` }}
               ></div>
             </div>

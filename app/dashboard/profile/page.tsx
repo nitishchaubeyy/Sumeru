@@ -1,102 +1,171 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function ProfilePage() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
+import { useState, useEffect } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import { toast } from "sonner";
+import { User, Shield, Save, Award, Activity, History, Calendar } from "lucide-react";
+
+export default function ProfilePage() {
+  const [loading, setLoading] = useState(true);
+  const [userMetadata, setUserMetadata] = useState<any>(null);
+  const [displayName, setDisplayName] = useState("");
+  const [stats, setStats] = useState({ total: 0, sessions: 0 });
+  const [logs, setLogs] = useState<any[]>([]); // 🎯 Past logs ke liye state
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) { return cookieStore.get(name)?.value; },
-      },
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const fetchProfileData = async () => {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-  // --- Total Jap Fetching (Only for this User) ---
-  const { data: userLogs } = await supabase
-    .from("jap_logs")
-    .select("count, created_at")
-    .eq("user_id", user.id);
+    setUserMetadata(user.user_metadata);
 
-  const totalJap = userLogs?.reduce((acc, curr) => acc + curr.count, 0) || 0;
-  const sessionsCount = userLogs?.length || 0;
+    // 1. Fetch Display Name
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("id", user.id)
+      .single();
+    if (profile?.display_name) setDisplayName(profile.display_name);
+
+    // 2. Fetch ALL Logs for History & Stats
+    const { data: allLogs, error } = await supabase
+      .from("jap_logs")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }); // Latest first
+
+    if (allLogs) {
+      setLogs(allLogs);
+      const total = allLogs.reduce((acc, curr) => acc + curr.count, 0) || 0;
+      setStats({ total, sessions: allLogs.length || 0 });
+    }
+    
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchProfileData(); }, []);
+
+  const handleUpdateDisplayName = async () => {
+    setIsUpdating(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ display_name: displayName })
+      .eq("id", user?.id);
+
+    if (!error) {
+      toast.success("Mandal mein ab aap isi naam se dikhenge!");
+    } else {
+      toast.error("Galti hui: " + error.message);
+    }
+    setIsUpdating(false);
+  };
+
+  if (loading) return <div className="p-8 text-center font-black text-brand-orange animate-pulse">Shubh Aarambh...</div>;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-orange-100 dark:border-zinc-800 shadow-sm">
-        <img 
-          src={user.user_metadata.avatar_url} 
-          alt="Profile" 
-          className="w-24 h-24 rounded-full border-4 border-brand-orange shadow-lg"
-        />
-        <div className="text-center md:text-left">
-          <h1 className="text-3xl font-black mb-1">{user.user_metadata.full_name}</h1>
-          <p className="text-slate-500 dark:text-zinc-400 font-medium">{user.email}</p>
-          <div className="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
-            <span className="px-4 py-1 bg-orange-100 dark:bg-orange-900/30 text-brand-orange text-xs font-black rounded-full uppercase tracking-widest">
-              Devoted Seeker
-            </span>
-            <span className="px-4 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-xs font-black rounded-full uppercase tracking-widest">
-              Level 1
-            </span>
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700 pb-20">
+      <h1 className="text-4xl font-black italic text-zinc-900 dark:text-white">Mera Profile 🏔️</h1>
+
+      {/* --- Profile Header --- */}
+      <div className="bg-zinc-900 dark:bg-zinc-800 p-8 md:p-12 rounded-4xl text-white shadow-2xl flex flex-col md:flex-row items-center gap-8 border-4 border-orange-100/10">
+        <img src={userMetadata?.avatar_url} className="w-32 h-32 rounded-full border-4 border-brand-orange shadow-lg" alt="Avatar" />
+        <div className="text-center md:text-left space-y-2">
+          <h2 className="text-4xl font-black">{userMetadata?.full_name}</h2>
+          <p className="opacity-60 font-medium">{userMetadata?.email}</p>
+          <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+            <span className="px-4 py-1.5 bg-brand-orange rounded-full text-[10px] font-black uppercase tracking-widest">Devoted Seeker</span>
+            <span className="px-4 py-1.5 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest">Level 1</span>
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* --- Stats Section --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-brand-orange p-8 rounded-[2.5rem] text-white shadow-xl shadow-orange-200 dark:shadow-none">
-          <p className="text-sm font-bold opacity-80 uppercase tracking-widest mb-2">Total Lifetime Jap</p>
-          <h2 className="text-6xl font-black">{totalJap.toLocaleString('en-IN')}</h2>
-          <p className="mt-4 text-sm opacity-90 font-medium italic">"Sumeru par aapka har naam jap darj hai."</p>
+        <div className="bg-brand-orange p-10 rounded-4xl text-white shadow-xl">
+           <Activity className="w-8 h-8 mb-4 opacity-50" />
+           <p className="text-xs font-black uppercase tracking-[0.2em] mb-1">Total Lifetime Jap</p>
+           <h3 className="text-6xl font-black leading-none">{stats.total.toLocaleString()}</h3>
         </div>
-
-        <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-orange-100 dark:border-zinc-800 flex flex-col justify-center">
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Total Sessions</p>
-          <h2 className="text-5xl font-black text-brand-text dark:text-white">{sessionsCount}</h2>
-          <p className="mt-4 text-sm text-slate-500 font-medium italic">Kitni baar aapne dhyaan lagaya.</p>
+        <div className="bg-zinc-100 dark:bg-zinc-900 p-10 rounded-4xl border border-zinc-200 dark:border-zinc-800">
+           <Award className="w-8 h-8 mb-4 text-brand-orange" />
+           <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Total Sessions</p>
+           <h3 className="text-6xl font-black text-zinc-900 dark:text-white leading-none">{stats.sessions}</h3>
         </div>
       </div>
 
-      {/* Recent Activity Table */}
-      <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-orange-100 dark:border-zinc-800 overflow-hidden shadow-sm">
-        <div className="p-8 border-b border-orange-50 dark:border-zinc-800">
-          <h3 className="text-xl font-bold">Recent Sankalps</h3>
+      {/* --- Leaderboard Settings (Gupt Naam) --- */}
+      <div className="bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-4xl border border-orange-100 dark:border-zinc-800 shadow-xl">
+        <div className="flex items-center gap-3 mb-8">
+          <Shield className="text-brand-orange w-6 h-6" />
+          <h3 className="text-2xl font-black italic text-zinc-900 dark:text-white">Mandal Pehchan</h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-orange-50/50 dark:bg-zinc-800/50 text-xs uppercase font-black text-slate-400">
-              <tr>
-                <th className="px-8 py-4">Date</th>
-                <th className="px-8 py-4">Count</th>
-                <th className="px-8 py-4 text-right">Source</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-orange-50 dark:divide-zinc-800">
-              {userLogs?.slice(-5).reverse().map((log, i) => (
-                <tr key={i} className="hover:bg-orange-50/30 dark:hover:bg-zinc-800/30 transition-colors">
-                  <td className="px-8 py-4 text-sm font-bold">
-                    {new Date(log.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </td>
-                  <td className="px-8 py-4 text-brand-orange font-black text-lg">+{log.count}</td>
-                  <td className="px-8 py-4 text-sm text-slate-400 text-right font-medium">Web Dashboard</td>
-                </tr>
+        <div className="space-y-6">
+          <div className="relative">
+            <User className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-orange w-5 h-5" />
+            <input 
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="E.g. Ek Das, Radhe Sharan..."
+              className="w-full pl-14 pr-6 py-5 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white border-2 border-transparent focus:border-brand-orange rounded-3xl outline-none font-bold text-lg transition-all"
+            />
+          </div>
+          <button onClick={handleUpdateDisplayName} disabled={isUpdating} className="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50">
+            <Save className="w-6 h-6" /> {isUpdating ? "Saving..." : "Pehchan Save Karein"}
+          </button>
+        </div>
+      </div>
+
+      {/* --- 🎯 THE RETURN: NAAM-JAP PATRIKA (History) --- */}
+      <div className="bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-4xl border border-orange-100 dark:border-zinc-800 shadow-xl overflow-hidden">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <History className="text-brand-orange w-6 h-6" />
+            <h3 className="text-2xl font-black italic text-zinc-900 dark:text-white">Naam-Jap Abhilekh</h3>
+          </div>
+          <span className="px-4 py-1 bg-orange-50 dark:bg-orange-900/20 text-brand-orange rounded-full text-[10px] font-black uppercase tracking-widest">
+            {logs.length} Entries
+          </span>
+        </div>
+
+        {/* Scrollable Container */}
+        <div className="max-h-125 overflow-y-auto pr-2 custom-scrollbar">
+          {logs.length > 0 ? (
+            <div className="space-y-3">
+              {logs.map((log) => (
+                <div key={log.id} className="flex items-center justify-between p-5 bg-zinc-50 dark:bg-zinc-800/50 rounded-3xl border border-transparent hover:border-orange-100 dark:hover:border-orange-900/30 transition-all group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-zinc-800 flex items-center justify-center text-brand-orange shadow-sm group-hover:scale-110 transition-transform">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="font-black text-zinc-900 dark:text-white leading-none">
+                        {new Date(log.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </p>
+                      <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-1">
+                        Source: {log.source || 'Dashboard'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-black text-brand-orange">+{log.count}</p>
+                    <p className="text-[10px] font-black opacity-30 uppercase tracking-tighter">Jap</p>
+                  </div>
+                </div>
               ))}
-              {sessionsCount === 0 && (
-                <tr>
-                  <td colSpan={3} className="px-8 py-12 text-center text-slate-400 font-medium">
-                    Abhi tak koi data nahi hai. Mala shuru kariyey!
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            </div>
+          ) : (
+            <div className="py-20 text-center">
+              <Activity className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+              <p className="text-slate-400 font-bold italic">Abhi koi record nahi mila.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

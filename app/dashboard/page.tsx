@@ -217,7 +217,7 @@ export default function Dashboard() {
       <AnimatePresence>
         {showMantraModal && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-4xl border border-orange-100 bg-white p-10 shadow-2xl dark:bg-zinc-900">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-4xl border border-orange-100 p-10 shadow-2xl">
               <div className="mb-10 flex items-center justify-between">
                 <h3 className="text-3xl font-black italic text-brand-orange">Mantras</h3>
                 <button onClick={() => setShowMantraModal(false)}><X className="h-8 w-8 opacity-40 hover:opacity-100 text-zinc-900 dark:text-white" /></button>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import { useTheme } from "next-themes";
+import { Trophy } from 'lucide-react';
 import { useState, useEffect } from "react";
 import {
   Home,
@@ -34,6 +35,7 @@ export function Sidebar({ user }: { user: any }) {
 
   const menuItems = [
     { name: "Mala", href: "/dashboard", icon: Flower2 },
+    { name: "Mandal", href: "/dashboard/mandal", icon: Trophy },
     { name: "Manual", href: "/dashboard/manual", icon: Edit3 },
     { name: "Sankalp", href: "/dashboard/sankalp", icon: Home },
     { name: "Profile", href: "/dashboard/profile", icon: UserIcon },
