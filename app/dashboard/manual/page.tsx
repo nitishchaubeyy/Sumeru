@@ -25,7 +25,6 @@ export default function ManualEntryPage() {
     setIsSubmitting(true);
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Hum 'created_at' ko user ki chuni hui date se override kar rahe hain
     const { error } = await supabase.from("jap_logs").insert({
       count: parseInt(count),
       user_id: user?.id,
@@ -44,17 +43,16 @@ export default function ManualEntryPage() {
 
   return (
     <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-[3rem] border border-orange-100 dark:border-zinc-800 shadow-xl">
+      <div className="bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-4xl border border-orange-100 dark:border-zinc-800 shadow-xl">
         <div className="mb-8 text-center">
-          <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-orange">
+          <div className="w-16 h-16 bg-orange-50 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-orange">
             <Calendar className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-black italic">Atit ke Sankalp</h1>
+          <h1 className="text-3xl font-black italic text-zinc-900 dark:text-white">Atit ke Sankalp</h1>
           <p className="text-slate-500 dark:text-zinc-400 mt-2">Apne purane ya physical mala ke jap yahan darj karein.</p>
         </div>
 
         <form onSubmit={handleManualSubmit} className="space-y-6">
-          {/* Count Input */}
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Kitne Jap kiye?</label>
             <div className="relative">
@@ -64,13 +62,12 @@ export default function ManualEntryPage() {
                 value={count}
                 onChange={(e) => setCount(e.target.value)}
                 placeholder="E.g. 108, 1008..."
-                className="w-full pl-14 pr-6 py-5 bg-zinc-50 dark:bg-zinc-800/50 border-2 border-transparent focus:border-brand-orange rounded-3xl outline-none font-bold text-xl transition-all"
+                className="w-full pl-14 pr-6 py-5 bg-zinc-50 dark:bg-zinc-800/50 text-zinc-900 dark:text-white border-2 border-transparent focus:border-brand-orange rounded-3xl outline-none font-bold text-xl transition-all"
                 required
               />
             </div>
           </div>
 
-          {/* Date Input */}
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Kis din kiye?</label>
             <div className="relative">
@@ -78,19 +75,18 @@ export default function ManualEntryPage() {
               <input
                 type="date"
                 value={date}
-                max={new Date().toISOString().split("T")[0]} // Future date allow nahi karni
+                max={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full pl-14 pr-6 py-5 bg-zinc-50 dark:bg-zinc-800/50 border-2 border-transparent focus:border-brand-orange rounded-3xl outline-none font-bold text-lg transition-all"
+                className="w-full pl-14 pr-6 py-5 bg-zinc-50 dark:bg-zinc-800/50 text-zinc-900 dark:text-white border-2 border-transparent focus:border-brand-orange rounded-3xl outline-none font-bold text-lg transition-all"
                 required
               />
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-5 bg-brand-text text-white dark:bg-white dark:text-black rounded-3xl font-black text-lg shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-3xl font-black text-lg shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : (
               <>
@@ -102,7 +98,7 @@ export default function ManualEntryPage() {
         </form>
       </div>
 
-      <div className="mt-8 p-6 bg-orange-50 dark:bg-zinc-800/30 rounded-3xl border border-dashed border-orange-200 dark:border-zinc-700 text-center text-sm italic text-slate-500">
+      <div className="mt-8 p-6 bg-orange-50/50 dark:bg-zinc-800/30 rounded-3xl border border-dashed border-orange-200 dark:border-zinc-700 text-center text-sm italic text-slate-500 dark:text-zinc-400">
         "Purane sankalp aaj ki pragati ka aadhar hain."
       </div>
     </div>

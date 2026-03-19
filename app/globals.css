@@ -1,29 +1,50 @@
 @import "tailwindcss";
 
-/* Sumeru Theme for Tailwind v4 */
+/* --- Sumeru Theme for Tailwind v4 --- */
 @theme {
-  --color-brand-bg: var(--bg);
-  --color-brand-text: var(--text);
-  --color-brand-orange: #f97316; /* orange-500 */
+  /* Branding Colors */
+  --color-brand-orange: #FF8C00;
+  --color-brand-bg: var(--background);
+  --color-brand-text: var(--foreground);
+  
+  /* Border & Radius Extensions */
+  --radius-4xl: 2rem;
+  --border-12: 12px;
+  
+  /* System Overrides */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 }
 
+/* --- Light Mode (Default) --- */
 :root {
-  --bg: #FFFBF2;
-  --text: #2D2424;
+  --background: #FFFBF2; /* Sumeru signature light cream */
+  --foreground: #2D2424;
 }
 
+/* --- Dark Mode (Triggered by .dark class) --- */
 .dark {
-  --bg: #121212;
-  --text: #EAEAEA;
+  --background: #09090b; /* Deep spiritual dark */
+  --foreground: #fafafa;
 }
 
-body {
-  background-color: var(--bg);
-  color: var(--text);
-  transition: all 0.3s ease;
+/* --- Base Styles --- */
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    min-height: 100vh;
+    @apply antialiased;
+  }
+
+  /* Smooth transition for all sections and cards */
+  section, div, button, nav, aside {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
 }
 
-/* Feature Cards and Sections Fix */
-section, .card {
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* Custom Utilities if needed */
+.selection-orange {
+  @apply selection:bg-orange-100 dark:selection:bg-orange-900/30;
 }
