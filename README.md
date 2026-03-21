@@ -15,5 +15,5 @@
 - **Backend:** Supabase (Auth & PostgreSQL).
 - **State & Sync:** TanStack Query + IndexedDB.
 
-## 🚀 Development
-This project is currently under active development.
+## 🚀 Project Status
+SUMERU. is currently in its Stable Beta phase. The core tracking and Mandal (leaderboard) functionalities are fully operational and deployed. Ongoing development is focused on enhancing user engagement through spiritual streaks, goal-setting modules, and performance optimizations to ensure a seamless sadhana experience for all seekers.
