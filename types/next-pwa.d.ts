@@ -1,0 +1,1 @@
+declare module "@ducanh2912/next-pwa";
