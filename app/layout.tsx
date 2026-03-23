@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "@/lib/theme-provider"; // Ensure this is using next-themes
+import { ThemeProvider } from "@/lib/theme-provider"; 
 import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SUMERU. | Your Spiritual Journey",
-  description: "Track your Naam Jap and join the Sangh",
+  title: "SUMERU. | Aapka Aadhyatmik Saathi 🏔️",
+  description: "Track Jap. Build Streaks. Join the Mandal.",
+  manifest: "/manifest", 
+  themeColor: "#ff8c00",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Sumeru",
+  },
+  icons: {
+    icon: "/icon-192.png", 
+    apple: "/apple-icon.png",
+  },
 };
+
 
 export default function RootLayout({
   children,
