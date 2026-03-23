@@ -1,13 +1,13 @@
-# Sumeru 🏔️
+# Sumeru. 🏔️
 
-**Sumeru** is a modern, scalable, and minimalist *Naam Jap (Chanting) Tracker* designed to help seekers maintain consistency in their spiritual journey.
+**Sumeru.** is a modern, scalable, and minimalist *Naam Jap (Chanting) Tracker* designed to help seekers maintain consistency in their spiritual journey.
 
 ---
 
 ## ✨ Features
 
 ### 📱 Progressive Web App (PWA)
-- Install Sumeru on **Android, iOS, or Desktop**
+- Install Sumeru. on **Android, iOS, or Desktop**
 - Full-screen, distraction-free experience
 - Native app-like performance
 
@@ -61,7 +61,7 @@
 
 ## 🚀 Project Status
 
-**Sumeru is currently in Stable Beta.**
+**Sumeru. is currently in Stable Beta.**
 
 ### ✅ Completed
 - Core chanting tracker
@@ -79,7 +79,7 @@
 
 ## 🎯 Vision
 
-Sumeru aims to provide a **focused, distraction-free digital environment** for seekers to build consistency in their *sadhana*, while leveraging modern technology to enhance discipline, motivation, and community connection.
+Sumeru. aims to provide a **focused, distraction-free digital environment** for seekers to build consistency in their *sadhana*, while leveraging modern technology to enhance discipline, motivation, and community connection.
 
 ---
 
