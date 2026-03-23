@@ -1,13 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next"; 
 import { ThemeProvider } from "@/lib/theme-provider"; 
 import { Toaster } from "sonner";
 import "./globals.css";
 
+
+export const viewport: Viewport = {
+  themeColor: "#ff8c00",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, 
+};
+
 export const metadata: Metadata = {
   title: "SUMERU. | Aapka Aadhyatmik Saathi 🏔️",
   description: "Track Jap. Build Streaks. Join the Mandal.",
-  manifest: "/manifest", 
-  themeColor: "#ff8c00",
+  manifest: "/manifest.webmanifest", 
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -19,7 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function RootLayout({
   children,
 }: {
@@ -27,9 +34,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* suppressHydrationWarning is important because next-themes 
-        will modify the class on the html tag before the page hydrates.
-      */}
       <body className="antialiased font-sans">
         <ThemeProvider
           attribute="class"
