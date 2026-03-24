@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Trophy, Target, Calendar, Plus, Infinity, Star, CheckCircle2, X, Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import InstallBanner from "@/components/InstallBanner"; 
 
 export default function SankalpPage() {
   const [sankalps, setSankalps] = useState<any[]>([]);
@@ -72,7 +73,7 @@ export default function SankalpPage() {
         current_count: 0,
         end_date: finalEndDate,
         is_primary: sankalps.length === 0, 
-        status: "active" // ✅ YAHAN "ongoing" ko "active" kar diya gaya hai!
+        status: "active" 
       };
 
       console.log("🚀 Payload going to Supabase:", payload);
@@ -95,6 +96,7 @@ export default function SankalpPage() {
       setIsSubmitting(false);
     }
   };
+
   const setPrimary = async (id: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -123,7 +125,7 @@ export default function SankalpPage() {
   if (loading) return <div className="p-8 text-center font-black text-orange-500 animate-pulse">Sadhana Marg Loading... 🏔️</div>;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-20 p-4">
+    <div className="max-w-5xl mx-auto space-y-8 pb-20 p-4 relative">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-black italic text-zinc-900 dark:text-white leading-none">Mere Sankalp</h1>
@@ -191,7 +193,7 @@ export default function SankalpPage() {
           let isExpired = false;
           if (s.end_date && !isSiddh) {
             const endDateObj = new Date(s.end_date);
-            endDateObj.setHours(23, 59, 59, 999); // Din ka aakhiri second
+            endDateObj.setHours(23, 59, 59, 999); 
             isExpired = endDateObj.getTime() < new Date().getTime();
           }
 
@@ -280,6 +282,10 @@ export default function SankalpPage() {
           </Button>
         </div>
       )}
+
+      {/* ✅  InstallBanner ko render kar diya gaya hai */}
+      <InstallBanner />
+
     </div>
   );
 }
