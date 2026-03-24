@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Trophy, Target, Calendar, Plus, Infinity, Star, CheckCircle2, X, Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import InstallBanner from "@/components/InstallBanner"; 
+import DashboardInstallBanner from "@/components/DashboardInstallBanner"; 
 
 export default function SankalpPage() {
   const [sankalps, setSankalps] = useState<any[]>([]);
@@ -139,6 +139,9 @@ export default function SankalpPage() {
           {showForm ? "Cancel" : "Naya Sankalp"}
         </Button>
       </div>
+
+      {/* ✅ Naya Dashboard Banner Yahan Render Hoga */}
+      <DashboardInstallBanner />
 
       {showForm && (
         <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border-2 border-orange-100 dark:border-zinc-800 animate-in fade-in slide-in-from-top-4 duration-500 shadow-2xl">
@@ -282,10 +285,6 @@ export default function SankalpPage() {
           </Button>
         </div>
       )}
-
-      {/* ✅  InstallBanner ko render kar diya gaya hai */}
-      <InstallBanner />
-
     </div>
   );
 }
