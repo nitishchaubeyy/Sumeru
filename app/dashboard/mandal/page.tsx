@@ -57,9 +57,9 @@ export default function MandalPage() {
             onChange={(e: any) => setFilter(e.target.value)}
             className="appearance-none bg-white dark:bg-zinc-900 border-2 border-orange-100 dark:border-zinc-800 px-8 py-4 rounded-2xl font-black text-sm outline-none focus:border-brand-orange transition-all cursor-pointer pr-12 shadow-sm"
           >
-            <option value="today">AAJ KE VEER</option>
-            <option value="week">IS HAFTE KE</option>
-            <option value="month">IS MAHINE KE</option>
+            <option value="today">Top Naamjapak (Today)</option>
+            <option value="week">Top Naamjapak (Weekly)</option>
+            <option value="month">Top Naamjapak (Monthly)</option>
           </select>
           <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brand-orange pointer-events-none" />
         </div>
